@@ -17,3 +17,20 @@ export type HomeNavigatorParamList = {
 export type TabTwoParamList = {
   TabTwoScreen: undefined
 }
+
+export type UserType = {
+  id: string
+  username: string
+  name: string
+  image?: string
+}
+export type TweetType = {
+  id: string
+  user: UserType
+  content: string
+  createdAt: string
+  image?: string
+  numberOfComments?: number
+  numberOfLikes?: number
+  numberOfRetweets?: number
+}

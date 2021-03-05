@@ -6,7 +6,7 @@ import ProfilePicture from '../components/ProfilePicture'
 
 import Colors from '../constants/Colors'
 import useColorScheme from '../hooks/useColorScheme'
-import TabOneScreen from '../screens/TabOneScreen'
+import HomeScreen from '../screens/HomeScreen'
 import TabTwoScreen from '../screens/TabTwoScreen'
 import {
   BottomTabParamList,
@@ -86,7 +86,7 @@ function HomeNavigator() {
     <TabOneStack.Navigator>
       <TabOneStack.Screen
         name='HomeScreen'
-        component={TabOneScreen}
+        component={HomeScreen}
         //configuring the header with the options property.
         options={{
           headerRightContainerStyle: { marginRight: 15 },
