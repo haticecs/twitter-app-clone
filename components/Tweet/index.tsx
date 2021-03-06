@@ -5,14 +5,16 @@ import MainContainer from './MainContainer'
 
 import { TweetType } from '../../types'
 
+import styles from './styles'
+
 export type TweetProps = {
   tweet: TweetType
 }
 
 const Tweet = ({ tweet }: TweetProps) => (
-  <View>
-    <LeftContainer />
-    <MainContainer />
+  <View style={styles.container}>
+    <LeftContainer user={tweet.user} />
+    <MainContainer tweet={tweet} />
   </View>
 )
 

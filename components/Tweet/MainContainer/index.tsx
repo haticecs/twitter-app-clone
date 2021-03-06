@@ -1,14 +1,21 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, Image } from 'react-native'
+import styles from './styles'
+import { TweetType } from '../../../types'
 
-export type MainContainerProps = {}
+import Header from './Header'
+import Content from './Content'
+import Footer from './Footer'
 
-const MainContainer = (props: MainContainerProps) => (
-  <View>
-    <Text>Main Container</Text>
-    {/*<tweet header/>*/}
-    {/*<content/>*/}
-    {/*<tweet footer/>*/}
+export type MainContainerProps = {
+  tweet: TweetType
+}
+
+const MainContainer = ({ tweet }: MainContainerProps) => (
+  <View style={styles.container}>
+    <Header tweet={tweet} />
+    <Content tweet={tweet} />
+    <Footer tweet={tweet} />
   </View>
 )
 
