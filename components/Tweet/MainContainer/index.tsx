@@ -1,6 +1,5 @@
 import React from 'react'
-import { View, Text, Image } from 'react-native'
-import styles from './styles'
+import { View, StyleSheet } from 'react-native'
 import { TweetType } from '../../../types'
 
 import Header from './Header'
@@ -18,5 +17,12 @@ const MainContainer = ({ tweet }: MainContainerProps) => (
     <Footer tweet={tweet} />
   </View>
 )
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginHorizontal: 10,
+  },
+})
 
 export default MainContainer

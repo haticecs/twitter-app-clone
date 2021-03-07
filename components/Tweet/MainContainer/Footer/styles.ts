@@ -4,6 +4,7 @@ const styles = StyleSheet.create({
   footerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 5,
   },
   iconContainer: {
     flexDirection: 'row',

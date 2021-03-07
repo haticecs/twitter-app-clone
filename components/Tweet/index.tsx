@@ -1,11 +1,9 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import LeftContainer from './LeftContainer'
 import MainContainer from './MainContainer'
 
 import { TweetType } from '../../types'
-
-import styles from './styles'
 
 export type TweetProps = {
   tweet: TweetType
@@ -17,5 +15,15 @@ const Tweet = ({ tweet }: TweetProps) => (
     <MainContainer tweet={tweet} />
   </View>
 )
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    width: '100%',
+    padding: 15,
+    borderBottomWidth: 0.3,
+    borderBottomColor: 'lightgrey',
+  },
+})
 
 export default Tweet
