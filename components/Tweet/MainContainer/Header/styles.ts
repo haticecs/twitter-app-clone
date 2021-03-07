@@ -1,12 +1,9 @@
 import { StyleSheet } from 'react-native'
 
 const styles = StyleSheet.create({
-  tweetHeaderContainer: {
+  HeaderContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  tweetHeaderNames: {
-    flexDirection: 'row',
   },
   name: {
     marginRight: 5,
@@ -19,6 +16,9 @@ const styles = StyleSheet.create({
   createdAt: {
     marginRight: 5,
     color: 'grey',
+  },
+  moreIcon: {
+    alignSelf: 'flex-end',
   },
 })
 
