@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
   moreIcon: {
-    alignSelf: 'flex-end',
   },
 })
 

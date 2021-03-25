@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { Entypo } from '@expo/vector-icons'
 import { TweetType } from '../../../../types'
 import styles from './styles'
@@ -12,12 +12,21 @@ export type HeaderProps = {
 const Header = ({ tweet }: HeaderProps) => {
   return (
     <View style={styles.HeaderContainer}>
-      <Text style={styles.name}>{tweet.user.name}</Text>
-      <Text style={styles.username}>@{tweet.user.username}</Text>
-      <Text style={styles.createdAt}>
-        {moment(tweet.createdAt).fromNow(true)}
-      </Text>
-      <Entypo name='chevron-down' size={16} color='grey' />
+      <View style={{ flexDirection: 'row' }}>
+        <Text style={styles.name}>{tweet.user.name}</Text>
+        <Text style={styles.username}>@{tweet.user.username}</Text>
+        <Text style={styles.createdAt}>
+          &#183;
+          {moment(tweet.createdAt).fromNow(true)}
+        </Text>
+      </View>
+      <TouchableOpacity>
+        <Entypo
+          name='chevron-down'
+          size={18}
+          color='lightgrey'
+        />
+      </TouchableOpacity>
     </View>
   )
 }
