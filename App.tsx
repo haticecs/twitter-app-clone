@@ -11,7 +11,7 @@ import useColorScheme from './hooks/useColorScheme'
 import Navigation from './navigation'
 
 // @ts-ignore
-import config from './src/aws-exports'
+import config from './aws-exports'
 
 Amplify.configure(config)
 
@@ -30,5 +30,5 @@ function App() {
     )
   }
 }
-
+//comment for me 
 export default withAuthenticator(App)

@@ -1,0 +1,12 @@
+projects:
+  twitterappclone:
+    schemaPath: mnt/c/Users/Hatice/Documents/GitHub/twitter-app-clone/graphql/schema.json
+    includes:
+      - src/graphql/**/*.ts
+    excludes:
+      - ./amplify/**
+    extensions:
+      amplify:
+        codeGenTarget: typescript
+        generatedFileName: src/API.ts
+        docsFilePath: src/graphql
