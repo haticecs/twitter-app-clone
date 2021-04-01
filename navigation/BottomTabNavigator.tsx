@@ -1,9 +1,10 @@
+import React, { useEffect, useState } from 'react'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createStackNavigator } from '@react-navigation/stack'
-import * as React from 'react'
-import ProfilePicture from '../components/ProfilePicture'
+import { Auth, API, graphqlOperation } from 'aws-amplify'
 
+import ProfilePicture from '../components/ProfilePicture'
 import Colors from '../constants/Colors'
 import useColorScheme from '../hooks/useColorScheme'
 import HomeScreen from '../screens/HomeScreen'
@@ -13,6 +14,7 @@ import {
   HomeNavigatorParamList,
   TabTwoParamList,
 } from '../types'
+import { getUser } from '../src/graphql/queries'
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>()
 
@@ -82,6 +84,36 @@ const TabOneStack = createStackNavigator<HomeNavigatorParamList>()
 //Param list let navigator know which screens will be included.
 
 function HomeNavigator() {
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      //get the current authenticated user
+      const userInfo = await Auth.currentAuthenticatedUser({
+        bypassCache: true,
+      })
+      if (!userInfo) {
+        return
+      }
+      try {
+        //get its data from database using getUser query
+        const userData = await API.graphql(
+          graphqlOperation(getUser, { id: userInfo.attributes.sub })
+        )
+
+        if (userData) {
+          setUser(userData.data.getUser)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    console.log(user)
+    console.log(user?.image)
+
+    fetchUser()
+  }, [])
+
   return (
     <TabOneStack.Navigator>
       <TabOneStack.Screen
@@ -99,6 +131,7 @@ function HomeNavigator() {
               color={Colors.light.tint}
             />
           ),
+
           headerRight: () => (
             <MaterialCommunityIcons
               name={'star-four-points-outline'}
@@ -106,14 +139,7 @@ function HomeNavigator() {
               color={Colors.light.tint}
             />
           ),
-          headerLeft: () => (
-            <ProfilePicture
-              image={
-                'https://avatars.githubusercontent.com/u/57989556?s=460&u=a8ec645a7ecd67f85394fb580f34d51e8d3c768f&v=4'
-              }
-              size={40}
-            />
-          ),
+          headerLeft: () => <ProfilePicture image={user?.image} size={40} />,
         }}
       />
     </TabOneStack.Navigator>

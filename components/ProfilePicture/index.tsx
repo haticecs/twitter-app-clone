@@ -7,15 +7,19 @@ export type ProfilePictureProps = {
   size?: number //optional
 }
 
-const ProfilePicture = ({ image, size = 50 }: ProfilePictureProps) => (
-  <Image
-    source={{ uri: image }}
-    style={{
-      width: size,
-      height: size,
-      borderRadius: size, //to get round shape
-    }}
-  />
-)
+const ProfilePicture = ({ image, size = 50 }: ProfilePictureProps) => {
+  return (
+    <Image
+      source={{
+        uri: image ? image : 'https://pbs.twimg.com/media/EfwBAQXU8AAFTR3.jpg',
+      }}
+      style={{
+        width: size,
+        height: size,
+        borderRadius: size, //to get round shape
+      }}
+    />
+  )
+}
 
 export default ProfilePicture

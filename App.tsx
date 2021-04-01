@@ -36,7 +36,7 @@ function App() {
   const colorScheme = useColorScheme()
 
   const getRandomImage = () => {
-    return 'https://wallpaperaccess.com/full/1098723.jpg'
+    return 'https://pbs.twimg.com/media/EfwBAQXU8AAFTR3.jpg'
   }
 
   const saveUserToDB = async (user: CreateUserInput) => {
