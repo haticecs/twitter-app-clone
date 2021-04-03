@@ -2,17 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { Auth, API, graphqlOperation } from 'aws-amplify'
 import { AntDesign, EvilIcons, Feather } from '@expo/vector-icons'
-
 import { TweetType } from '../../../../types'
 import styles from './styles'
-import { createLike } from '../../../../src/graphql/mutations'
+import { createLike, deleteLike } from '../../../../src/graphql/mutations'
 
 export type FooterProps = {
   tweet: TweetType
 }
 const Footer = ({ tweet }: FooterProps) => {
-  console.log(tweet)
-  const [user, setUser] = useState(null)
+  const [currentUser, setCurrentUser] = useState(null)
+  const [myLike, setMyLike] = useState(null)
+  const [likesCount, setLikesCount] = useState(tweet.likes.items.length)
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -20,29 +20,60 @@ const Footer = ({ tweet }: FooterProps) => {
         const userInfo = await Auth.currentAuthenticatedUser({
           bypassCache: true,
         })
-
-        if (!userInfo) return
-        setUser(userInfo)
+        if (!userInfo) {
+          return
+        }
+        setCurrentUser(userInfo)
       } catch (error) {
         console.log(error)
       }
+
+      const searchedLike = tweet.likes.items.find(
+        (like) => like.userID === currentUser.attributes.sub
+      )
+      setMyLike(searchedLike)
     }
 
     fetchUser()
   }, [])
 
   const onLike = async () => {
-    if (!user) return
+    if (!currentUser) {
+      return
+    }
+    if (!myLike) {
+      await submitLike()
+    } else {
+      await removeLike()
+    }
+  }
+
+  const submitLike = async () => {
     const like = {
-      userID: user.attributes.sub,
+      userID: currentUser.attributes.sub,
       tweetID: tweet.id,
     }
+
     try {
-      await API.graphql(
+      const response = await API.graphql(
         graphqlOperation(createLike, {
           input: like,
         })
       )
+      setMyLike(response.data.createLike)
+      setLikesCount(likesCount + 1)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const removeLike = async () => {
+    try {
+      await API.graphql(
+        graphqlOperation(deleteLike, { input: { id: myLike.id } })
+      )
+      setMyLike(null)
+      setLikesCount(likesCount - 1)
     } catch (error) {
       console.log(error)
     }
@@ -60,9 +91,17 @@ const Footer = ({ tweet }: FooterProps) => {
       </View>
       <View style={styles.iconContainer}>
         <TouchableOpacity onPress={onLike}>
-          <AntDesign name='hearto' size={20} color='grey' />
+          <AntDesign
+            name={!myLike ? 'hearto' : 'heart'}
+            size={20}
+            color={!myLike ? 'grey' : 'red'}
+          />
         </TouchableOpacity>
-        <Text style={styles.number}> {tweet.numberOfLikes}</Text>
+        {likesCount === 0 ? (
+          <Text style={styles.number}> </Text>
+        ) : (
+          <Text style={styles.number}>{likesCount}</Text>
+        )}
       </View>
       <View style={styles.iconContainer}>
         <EvilIcons name='share-google' size={28} color='grey' />
