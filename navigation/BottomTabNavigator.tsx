@@ -108,9 +108,6 @@ function HomeNavigator() {
         console.log(error)
       }
     }
-    console.log(user)
-    console.log(user?.image)
-
     fetchUser()
   }, [])
 
