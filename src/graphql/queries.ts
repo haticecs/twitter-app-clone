@@ -25,7 +25,7 @@ export const getUser = /* GraphQL */ `
       updatedAt
     }
   }
-`;
+`
 export const listUsers = /* GraphQL */ `
   query ListUsers(
     $filter: ModelUserFilterInput
@@ -48,7 +48,7 @@ export const listUsers = /* GraphQL */ `
       nextToken
     }
   }
-`;
+`
 export const getTweet = /* GraphQL */ `
   query GetTweet($id: ID!) {
     getTweet(id: $id) {
@@ -68,11 +68,21 @@ export const getTweet = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      likes {
+        items {
+          id
+          userID
+          tweetID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
   }
-`;
+`
 export const listTweets = /* GraphQL */ `
   query ListTweets(
     $filter: ModelTweetFilterInput
@@ -94,10 +104,20 @@ export const listTweets = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        likes {
+          items {
+            id
+            userID
+            tweetID
+            createdAt
+            updatedAt
+          }
+          nextToken
+        }
         createdAt
         updatedAt
       }
       nextToken
     }
   }
-`;
+`
