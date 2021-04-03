@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Text,
   View,
@@ -14,8 +14,10 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Colors from '../constants/Colors'
 import ProfilePicture from '../components/ProfilePicture'
 import { createTweet } from '../src/graphql/mutations'
+import { getUser } from '../src/graphql/queries'
 
 const NewTweetScreen = () => {
+  const [user, setUser] = useState(null)
   const [tweet, setTweet] = useState('')
   const [imageUrl, setImageUrl] = useState('')
 
@@ -38,6 +40,26 @@ const NewTweetScreen = () => {
     }
   }
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userInfo = await Auth.currentAuthenticatedUser({
+          bypassCache: true,
+        })
+        if (!userInfo) {
+          return
+        }
+        const userData = await API.graphql(
+          graphqlOperation(getUser, { id: userInfo.attributes.sub })
+        )
+        setUser(userData.data.getUser)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchUser()
+  }, [])
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
@@ -50,11 +72,7 @@ const NewTweetScreen = () => {
       </View>
       <ScrollView>
         <View style={styles.newTweetComponent}>
-          <ProfilePicture
-            image={
-              'https://avatars.githubusercontent.com/u/57989556?s=460&u=a8ec645a7ecd67f85394fb580f34d51e8d3c768f&v=4'
-            }
-          />
+          <ProfilePicture image={user?.image} />
           <View style={styles.inputsContainer}>
             <TextInput
               numberOfLines={0}
