@@ -9,11 +9,14 @@ import {
   Platform,
   Image,
 } from 'react-native'
-import { Auth, API, graphqlOperation } from 'aws-amplify'
+import { Auth, API, graphqlOperation, Storage } from 'aws-amplify'
 import { useNavigation } from '@react-navigation/native'
 import { AntDesign } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as ImagePicker from 'expo-image-picker'
+import 'react-native-get-random-values'
+// @ts-ignore
+import { v4 as uuidv4 } from 'uuid'
 
 import Colors from '../constants/Colors'
 import ProfilePicture from '../components/ProfilePicture'
@@ -72,13 +75,31 @@ const NewTweetScreen = () => {
     }
   }
 
+  const uploadImage = async () => {
+    try {
+      const response = await fetch(imageUrl)
+      const blob = await response.blob()
+
+      const urlParts = imageUrl.split('.')
+      const extension = urlParts[urlParts.length - 1]
+      const key = `${uuidv4()}.${extension}`
+
+      await Storage.put(key, blob, { contentType: 'image/jpeg' })
+      return key
+    } catch (error) {
+      console.log('Error uploading file:', error)
+      return ''
+    }
+  }
+
   const onPostTweet = async () => {
-    if (!user) {
-      return
+    let imageKey
+    if (!!imageUrl) {
+      imageKey = await uploadImage()
     }
     const newTweet = {
       content: tweet,
-      image: imageUrl,
+      image: imageKey,
       userID: user?.id,
     }
     try {
@@ -170,7 +191,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   image: {
-    width: 150,
-    height: 150,
+    width: '100%',
+    height: 200,
+    borderRadius: 10,
   },
 })
