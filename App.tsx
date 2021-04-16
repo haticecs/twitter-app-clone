@@ -16,7 +16,12 @@ import { getUser } from './src/graphql/queries'
 import { createUser } from './src/graphql/mutations'
 import { CreateUserInput } from './src/API'
 
-Amplify.configure(config)
+Amplify.configure({
+  ...config,
+  Analytics: {
+    disabled: true,
+  },
+})
 
 /* 
   Aws authentication is not connected to the Database.

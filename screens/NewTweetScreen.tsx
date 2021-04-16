@@ -6,11 +6,15 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  Platform,
+  Image,
 } from 'react-native'
 import { Auth, API, graphqlOperation } from 'aws-amplify'
 import { useNavigation } from '@react-navigation/native'
 import { AntDesign } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import * as ImagePicker from 'expo-image-picker'
+
 import Colors from '../constants/Colors'
 import ProfilePicture from '../components/ProfilePicture'
 import { createTweet } from '../src/graphql/mutations'
@@ -23,42 +27,67 @@ const NewTweetScreen = () => {
 
   const navigation = useNavigation()
 
-  const onPostTweet = async () => {
+  useEffect(() => {
+    fetchUser()
+    getPermissionAsync()
+  }, [])
+
+  const fetchUser = async () => {
     try {
       const userInfo = await Auth.currentAuthenticatedUser({
         bypassCache: true,
       })
-      const newTweet = {
-        content: tweet,
-        image: imageUrl,
-        userID: userInfo.attributes.sub,
+      if (!userInfo) {
+        return
       }
-      await API.graphql(graphqlOperation(createTweet, { input: newTweet }))
-      navigation.goBack()
+      const userData = await API.graphql(
+        graphqlOperation(getUser, { id: userInfo.attributes.sub })
+      )
+      setUser(userData.data.getUser)
     } catch (error) {
       console.log(error)
     }
   }
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const userInfo = await Auth.currentAuthenticatedUser({
-          bypassCache: true,
-        })
-        if (!userInfo) {
-          return
-        }
-        const userData = await API.graphql(
-          graphqlOperation(getUser, { id: userInfo.attributes.sub })
-        )
-        setUser(userData.data.getUser)
-      } catch (error) {
-        console.log(error)
+  const getPermissionAsync = async () => {
+    if (Platform.OS !== 'web') {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
+      if (status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to make this work!')
       }
     }
-    fetchUser()
-  }, [])
+  }
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    })
+
+    console.log(result)
+    if (!result.cancelled) {
+      setImageUrl(result.uri)
+    }
+  }
+
+  const onPostTweet = async () => {
+    if (!user) {
+      return
+    }
+    const newTweet = {
+      content: tweet,
+      image: imageUrl,
+      userID: user?.id,
+    }
+    try {
+      await API.graphql(graphqlOperation(createTweet, { input: newTweet }))
+    } catch (error) {
+      console.log(error)
+    }
+    navigation.goBack()
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -83,12 +112,12 @@ const NewTweetScreen = () => {
               value={tweet}
               onChangeText={(text) => setTweet(text)}
             />
-            <TextInput
-              style={styles.imageInput}
-              placeholder='Image url optional'
-              value={imageUrl}
-              onChangeText={(text) => setImageUrl(text)}
-            />
+            <TouchableOpacity onPress={pickImage}>
+              <Text style={styles.pickImage}>Pick a Image</Text>
+            </TouchableOpacity>
+            {!!imageUrl && (
+              <Image source={{ uri: imageUrl }} style={styles.image} />
+            )}
           </View>
         </View>
       </ScrollView>
@@ -113,6 +142,8 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: Colors.light.tint,
     borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonText: {
     color: 'white',
@@ -133,5 +164,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlignVertical: 'top', //for android
   },
-  imageInput: {},
+  pickImage: {
+    fontSize: 18,
+    color: Colors.light.tint,
+    marginVertical: 10,
+  },
+  image: {
+    width: 150,
+    height: 150,
+  },
 })

@@ -10,35 +10,24 @@ export type FooterProps = {
   tweet: TweetType
 }
 const Footer = ({ tweet }: FooterProps) => {
-  const [currentUser, setCurrentUser] = useState(null)
+  const [user, setUser] = useState(null)
   const [myLike, setMyLike] = useState(null)
   const [likesCount, setLikesCount] = useState(tweet.likes.items.length)
 
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        const userInfo = await Auth.currentAuthenticatedUser({
-          bypassCache: true,
-        })
-        if (!userInfo) {
-          return
-        }
-        setCurrentUser(userInfo)
-      } catch (error) {
-        console.log(error)
-      }
-
+      const currentUser = await Auth.currentAuthenticatedUser()
+      setUser(currentUser)
       const searchedLike = tweet.likes.items.find(
         (like) => like.userID === currentUser.attributes.sub
       )
       setMyLike(searchedLike)
     }
-
     fetchUser()
   }, [])
 
   const onLike = async () => {
-    if (!currentUser) {
+    if (!user) {
       return
     }
     if (!myLike) {
@@ -50,7 +39,7 @@ const Footer = ({ tweet }: FooterProps) => {
 
   const submitLike = async () => {
     const like = {
-      userID: currentUser.attributes.sub,
+      userID: user.attributes.sub,
       tweetID: tweet.id,
     }
 
