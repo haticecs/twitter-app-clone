@@ -1,5 +1,8 @@
-  # twitter-app-clone
-  Twitter app clone 
+  # Twitter-app-clone
+  ## Frontend
+  Typescript and Expo 
+  ## Backend
+  AWS Amplify and GraphQL
 
   ## Installation Requirements
 
